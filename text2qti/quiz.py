@@ -974,8 +974,6 @@ class Quiz(object):
                             points=self._next_question_attr.get('points'),
                             md=self.md)
         self._next_question_attr = {}
-        if question.question_html_xml in self.question_set:
-            raise Text2qtiError('Duplicate question')
         self.question_set.add(question.question_html_xml)
         self.questions_and_delims.append(question)
         if self._current_group is not None:
