@@ -15,7 +15,17 @@ from .quiz import Image
 
 MANIFEST_START = '''\
 <?xml version="1.0" encoding="UTF-8"?>
-<manifest identifier="{manifest_identifier}" xmlns="http://www.imsglobal.org/xsd/imsccv1p1/imscp_v1p1" xmlns:lom="http://ltsc.ieee.org/xsd/imsccv1p1/LOM/resource" xmlns:imsmd="http://www.imsglobal.org/xsd/imsmd_v1p2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsccv1p1/imscp_v1p1 http://www.imsglobal.org/xsd/imscp_v1p1.xsd http://ltsc.ieee.org/xsd/imsccv1p1/LOM/resource http://www.imsglobal.org/profile/cc/ccv1p1/LOM/ccv1p1_lomresource_v1p0.xsd http://www.imsglobal.org/xsd/imsmd_v1p2 http://www.imsglobal.org/xsd/imsmd_v1p2p2.xsd">
+<manifest identifier="{manifest_identifier}"
+xmlns="http://www.imsglobal.org/xsd/imscp_v1p1"
+xmlns:lom="http://ltsc.ieee.org/xsd/imsccv1p1/LOM/resource"
+xmlns:imsmd="http://www.imsglobal.org/xsd/imsmd_v1p2"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.imsglobal.org/xsd/imscp_v1p1
+http://www.imsglobal.org/xsd/qti/qtiv2p1/qtiv2p1_imscpv1p2_v1p0.xsd
+	http://ltsc.ieee.org/xsd/LOM  
+	http://www.imsglobal.org/xsd/imsmd_loose_v1p3p2.xsd 
+	http://www.imsglobal.org/xsd/imsqti_metadata_v2p1
+	http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_metadata_v2p1p1.xsd">
   <metadata>
     <schema>IMS Content</schema>
     <schemaversion>1.1.3</schemaversion>
