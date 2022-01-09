@@ -13,28 +13,22 @@ from .quiz import Quiz, Question, GroupStart, GroupEnd, TextRegion
 
 BEFORE_ITEMS = '''\
 <?xml version="1.0" encoding="UTF-8"?>
-<questestinterop xmlns="http://www.imsglobal.org/xsd/ims_qtiasiv1p2"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://www.imsglobal.org/xsd/ims_qtiasiv1p2
-http://www.imsglobal.org/xsd/ims_qtiasiv1p2p1.xsd">
-  <assessment ident="{assessment_identifier}" title="{title}">
-    <qtimetadata>
-      <qtimetadatafield>
-        <fieldlabel>cc_maxattempts</fieldlabel>
-        <fieldentry>1</fieldentry>
-      </qtimetadatafield>
-    </qtimetadata>
-    <section ident="root_section">
+<assessmentTest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" identifier="{assessment_identifier}"
+    title="{title}"
+    xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1p1.xsd">
+  <testPart identifier="testPart_{assessment_identifier}" navigationMode="linear" submissionMode="individual">
+    <assessmentSection identifier="root_assessmentSection" title="root_assessmentSection_title" visible="true">
 '''
 
 AFTER_ITEMS = '''\
-    </section>
-  </assessment>
-</questestinterop>
+    </assessmentSection>
+  </testPart>
+</assessmentTest>
 '''
 
 GROUP_START = '''\
-    <section ident="{ident}" title="{group_title}">
+    <assessmentSection identifier="{ident}" title="{group_title}" visible="true">
       <selection_ordering>
         <selection>
           <selection_number>{pick}</selection_number>
@@ -46,69 +40,67 @@ GROUP_START = '''\
 '''
 
 GROUP_END = '''\
-    </section>
+    </assessmentSection>
 '''
 
 TEXT = '''\
-      <item ident="{ident}" title="{text_title_xml}">
-        <itemmetadata>
-          <qtimetadata>
-            <qtimetadatafield>
-              <fieldlabel>question_type</fieldlabel>
-              <fieldentry>text_only_question</fieldentry>
-            </qtimetadatafield>
-            <qtimetadatafield>
-              <fieldlabel>points_possible</fieldlabel>
-              <fieldentry>0</fieldentry>
-            </qtimetadatafield>
-            <qtimetadatafield>
-              <fieldlabel>original_answer_ids</fieldlabel>
-              <fieldentry></fieldentry>
-            </qtimetadatafield>
-            <qtimetadatafield>
-              <fieldlabel>assessment_question_identifierref</fieldlabel>
-              <fieldentry>{assessment_question_identifierref}</fieldentry>
-            </qtimetadatafield>
-          </qtimetadata>
-        </itemmetadata>
-        <presentation>
-          <material>
-            <mattext texttype="text/html">{text_html_xml}</mattext>
-          </material>
-        </presentation>
-      </item>
+      <assessmentItem identifier="{ident}" title="{text_title_xml}" timeDependent="false">
+<!--        <itemmetadata> -->
+<!--          <qtimetadata> -->
+<!--            <qtimetadatafield> -->
+<!--              <fieldlabel>question_type</fieldlabel> -->
+<!--              <fieldentry>text_only_question</fieldentry> -->
+<!--            </qtimetadatafield> -->
+<!--            <qtimetadatafield> -->
+<!--              <fieldlabel>points_possible</fieldlabel> -->
+<!--              <fieldentry>0</fieldentry> -->
+<!--            </qtimetadatafield> -->
+<!--            <qtimetadatafield> -->
+<!--              <fieldlabel>original_answer_ids</fieldlabel> -->
+<!--              <fieldentry></fieldentry> -->
+<!--            </qtimetadatafield> -->
+<!--            <qtimetadatafield> -->
+<!--              <fieldlabel>assessment_question_identifierref</fieldlabel> -->
+<!--              <fieldentry>{assessment_question_identifierref}</fieldentry> -->
+<!--            </qtimetadatafield> -->
+<!--          </qtimetadata> -->
+<!--        </itemmetadata> -->
+        <itemBody>
+          {text_html_xml}
+        </itemBody>
+      </assessmentItem>
 '''
 
 START_ITEM = '''\
-      <item ident="{question_identifier}" title="{question_title}">
+      <assessmentItem identifier="{question_identifier}" title="{question_title}" timeDependent="false">
 '''
 
 END_ITEM = '''\
-      </item>
+      </assessmentItem>
 '''
 
 
 ITEM_METADATA_MCTF_SHORTANS_MULTANS_NUM = '''\
-        <itemmetadata>
-          <qtimetadata>
-            <qtimetadatafield>
-              <fieldlabel>question_type</fieldlabel>
-              <fieldentry>{question_type}</fieldentry>
-            </qtimetadatafield>
-            <qtimetadatafield>
-              <fieldlabel>points_possible</fieldlabel>
-              <fieldentry>{points_possible}</fieldentry>
-            </qtimetadatafield>
-            <qtimetadatafield>
-              <fieldlabel>original_answer_ids</fieldlabel>
-              <fieldentry>{original_answer_ids}</fieldentry>
-            </qtimetadatafield>
-            <qtimetadatafield>
-              <fieldlabel>assessment_question_identifierref</fieldlabel>
-              <fieldentry>{assessment_question_identifierref}</fieldentry>
-            </qtimetadatafield>
-          </qtimetadata>
-        </itemmetadata>
+<!--        <itemmetadata> -->
+<!--          <qtimetadata> -->
+<!--            <qtimetadatafield> -->
+<!--              <fieldlabel>question_type</fieldlabel> -->
+<!--              <fieldentry>{question_type}</fieldentry> -->
+<!--            </qtimetadatafield> -->
+<!--            <qtimetadatafield> -->
+<!--              <fieldlabel>points_possible</fieldlabel> -->
+<!--              <fieldentry>{points_possible}</fieldentry> -->
+<!--            </qtimetadatafield> -->
+<!--            <qtimetadatafield> -->
+<!--              <fieldlabel>original_answer_ids</fieldlabel> -->
+<!--              <fieldentry>{original_answer_ids}</fieldentry> -->
+<!--            </qtimetadatafield> -->
+<!--            <qtimetadatafield> -->
+<!--              <fieldlabel>assessment_question_identifierref</fieldlabel> -->
+<!--              <fieldentry>{assessment_question_identifierref}</fieldentry> -->
+<!--            </qtimetadatafield> -->
+<!--          </qtimetadata> -->
+<!--        </itemmetadata> -->
 '''
 
 ITEM_METADATA_ESSAY = ITEM_METADATA_MCTF_SHORTANS_MULTANS_NUM.replace('{original_answer_ids}', '')
@@ -116,23 +108,19 @@ ITEM_METADATA_ESSAY = ITEM_METADATA_MCTF_SHORTANS_MULTANS_NUM.replace('{original
 ITEM_METADATA_UPLOAD = ITEM_METADATA_ESSAY
 
 ITEM_PRESENTATION_MCTF = '''\
-        <presentation>
-          <material>
-            <mattext texttype="text/html">{question_html_xml}</mattext>
-          </material>
+        <itemBody>
+          {question_html_xml}
           <response_lid ident="response1" rcardinality="Single">
             <render_choice>
 {choices}
             </render_choice>
           </response_lid>
-        </presentation>
+        </itemBody>
 '''
 
 ITEM_PRESENTATION_MCTF_CHOICE = '''\
               <response_label ident="{ident}">
-                <material>
-                  <mattext texttype="text/html">{choice_html_xml}</mattext>
-                </material>
+                {choice_html_xml}
               </response_label>'''
 
 ITEM_PRESENTATION_MULTANS = ITEM_PRESENTATION_MCTF.replace('Single', 'Multiple')
@@ -140,50 +128,42 @@ ITEM_PRESENTATION_MULTANS = ITEM_PRESENTATION_MCTF.replace('Single', 'Multiple')
 ITEM_PRESENTATION_MULTANS_CHOICE = ITEM_PRESENTATION_MCTF_CHOICE
 
 ITEM_PRESENTATION_SHORTANS = '''\
-        <presentation>
-          <material>
-            <mattext texttype="text/html">{question_html_xml}</mattext>
-          </material>
+        <itemBody>
+          {question_html_xml}
           <response_str ident="response1" rcardinality="Single">
             <render_fib>
               <response_label ident="answer1" rshuffle="No"/>
             </render_fib>
           </response_str>
-        </presentation>
+        </itemBody>
 '''
 
 ITEM_PRESENTATION_ESSAY = '''\
-        <presentation>
-          <material>
-            <mattext texttype="text/html">{question_html_xml}</mattext>
-          </material>
+        <itemBody>
+          {question_html_xml}
           <response_str ident="response1" rcardinality="Single">
             <render_fib>
               <response_label ident="answer1" rshuffle="No"/>
             </render_fib>
           </response_str>
-        </presentation>
+        </itemBody>
 '''
 
 ITEM_PRESENTATION_UPLOAD = '''\
-        <presentation>
-          <material>
-            <mattext texttype="text/html">{question_html_xml}</mattext>
-          </material>
-        </presentation>
+        <itemBody>
+          {question_html_xml}
+        </itemBody>
 '''
 
 ITEM_PRESENTATION_NUM = '''\
-        <presentation>
-          <material>
-            <mattext texttype="text/html">{question_html_xml}</mattext>
-          </material>
+        <itemBody>
+          {question_html_xml}
           <response_str ident="response1" rcardinality="Single">
             <render_fib fibtype="Decimal">
               <response_label ident="answer1"/>
             </render_fib>
           </response_str>
-        </presentation>
+        </itemBody>
 '''
 
 
@@ -390,9 +370,7 @@ ITEM_RESPROCESSING_END = '''\
 ITEM_FEEDBACK_MCTF_SHORTANS_MULTANS_NUM_GENERAL = '''\
         <itemfeedback ident="general_fb">
           <flow_mat>
-            <material>
-              <mattext texttype="text/html">{feedback}</mattext>
-            </material>
+            {feedback}
           </flow_mat>
         </itemfeedback>
 '''
@@ -400,9 +378,7 @@ ITEM_FEEDBACK_MCTF_SHORTANS_MULTANS_NUM_GENERAL = '''\
 ITEM_FEEDBACK_MCTF_SHORTANS_MULTANS_NUM_CORRECT = '''\
         <itemfeedback ident="correct_fb">
           <flow_mat>
-            <material>
-              <mattext texttype="text/html">{feedback}</mattext>
-            </material>
+            {feedback}
           </flow_mat>
         </itemfeedback>
 '''
@@ -410,9 +386,7 @@ ITEM_FEEDBACK_MCTF_SHORTANS_MULTANS_NUM_CORRECT = '''\
 ITEM_FEEDBACK_MCTF_SHORTANS_MULTANS_NUM_INCORRECT = '''\
         <itemfeedback ident="general_incorrect_fb">
           <flow_mat>
-            <material>
-              <mattext texttype="text/html">{feedback}</mattext>
-            </material>
+            {feedback}
           </flow_mat>
         </itemfeedback>
 '''
@@ -420,9 +394,7 @@ ITEM_FEEDBACK_MCTF_SHORTANS_MULTANS_NUM_INCORRECT = '''\
 ITEM_FEEDBACK_MCTF_SHORTANS_MULTANS_NUM_INDIVIDUAL = '''\
         <itemfeedback ident="{ident}_fb">
           <flow_mat>
-            <material>
-              <mattext texttype="text/html">{feedback}</mattext>
-            </material>
+            {feedback}
           </flow_mat>
         </itemfeedback>
 '''
