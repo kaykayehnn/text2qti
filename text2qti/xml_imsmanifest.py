@@ -72,6 +72,40 @@ IMAGE = '''\
     </resource>
 '''
 
+ITEM_RESOURCE = '''\
+    <resource type="imsqti_item_xmlv2p1"
+    identifier="ResourceItem{id}"
+    href="{href}">
+      <metadata>
+<!--        <lom xmlns="http://ltsc.ieee.org/xsd/LOM"> -->
+<!--          <general> -->
+<!--            <identifier> -->
+<!--              <entry>VE_IP_01</entry> -->
+<!--            </identifier> -->
+<!--            <title></title> -->
+<!--          </general> -->
+<!--          <lifeCycle> -->
+<!--            <contribute /> -->
+<!--            <version> -->
+<!--              <string>Final 1.0</string> -->
+<!--            </version> -->
+<!--          </lifeCycle> -->
+<!--          <educational> -->
+<!--            <description> -->
+<!--              <string>The T/F Question.</string> -->
+<!--            </description> -->
+<!--          </educational> -->
+<!--          <qtiMetadata xmlns="http://www.imsglobal.org/xsd/imsqti_metadata_v2p1"> -->
+<!--            <interactionType>choiceInteraction</interactionType> -->
+<!--            <feedbackType>none</feedbackType> -->
+<!--            <solutionAvailable>false</solutionAvailable> -->
+<!--          </qtiMetadata> -->
+<!--        </lom> -->
+      </metadata>
+      <file href="{href}" />
+    </resource>
+'''
+
 MANIFEST_END = '''\
   </resources>
 </manifest>
@@ -83,6 +117,7 @@ def imsmanifest(*,
                 assessment_identifier: str,
                 dependency_identifier: str,
                 images: Dict[str, Image],
+                questions,
                 date: Optional[str]=None) -> str:
     '''
     Generate `imsmanifest.xml`.
@@ -96,5 +131,8 @@ def imsmanifest(*,
                                      date=date))
     for image in images.values():
         xml.append(IMAGE.format(ident=image.id, path=image.qti_xml_path))
+    for (id, href, question) in questions:
+      xml.append(ITEM_RESOURCE.format(id=id,href=href))
+
     xml.append(MANIFEST_END)
     return ''.join(xml)

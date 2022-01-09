@@ -10,6 +10,9 @@
 
 import io
 import pathlib
+import re
+import os
+import html
 from typing import Union, BinaryIO
 import zipfile
 from .quiz import Quiz
@@ -31,10 +34,18 @@ class QTI(object):
         self.assignment_identifier = f'{id_base}_assignment_{quiz.id}'
         self.assignment_group_identifier = f'{id_base}_assignment-group_{quiz.id}'
 
+        # Assessment and questions must be generated before imsmanifest because
+        # it depends on the item paths.
+        self.assessment = (html.unescape(
+                          assessment(quiz=quiz,
+                                     assessment_identifier=self.assessment_identifier,
+                                     title_xml=quiz.title_xml)))
+        self.questions = self.parseQuestionsAndUpdateAssessment()
+
         self.imsmanifest_xml = imsmanifest(manifest_identifier=self.manifest_identifier,
                                            assessment_identifier=self.assessment_identifier,
                                            dependency_identifier=self.dependency_identifier,
-                                           images=self.quiz.images)
+                                           images=self.quiz.images, questions=self.questions)
         self.assessment_meta = assessment_meta(assessment_identifier=self.assessment_identifier,
                                                assignment_identifier=self.assignment_identifier,
                                                assignment_group_identifier=self.assignment_group_identifier,
@@ -45,9 +56,6 @@ class QTI(object):
                                                show_correct_answers=quiz.show_correct_answers_xml,
                                                one_question_at_a_time=quiz.one_question_at_a_time_xml,
                                                cant_go_back=quiz.cant_go_back_xml)
-        self.assessment = assessment(quiz=quiz,
-                                     assessment_identifier=self.assessment_identifier,
-                                     title_xml=quiz.title_xml)
 
 
     def write(self, bytes_stream: BinaryIO):
@@ -55,6 +63,8 @@ class QTI(object):
             zf.writestr('imsmanifest.xml', self.imsmanifest_xml)
             zf.writestr(zipfile.ZipInfo('non_cc_assessments/'), b'')
             zf.writestr(f'{self.assessment_identifier}/{self.assessment_identifier}.xml', self.assessment)
+            for (id, path,question) in self.questions:
+                zf.writestr(path, question)
             for image in self.quiz.images.values():
                 zf.writestr(image.qti_zip_path, image.data)
 
@@ -63,6 +73,25 @@ class QTI(object):
         stream = io.BytesIO()
         self.write(stream)
         return stream.getvalue()
+    
+    def parseQuestionsAndUpdateAssessment(self):
+        questions = []
+        newAssessment = self.assessment
+        matches = re.findall(r'<assessmentItem[\w\W]+?<\/assessmentItem>', self.assessment)
+        for match in matches:
+            id = re.search(r'<assessmentItem identifier="([\w\W]+?)"', match).group(1).replace("text2qti_", "")
+            question = f'<?xml version="1.0" encoding="utf-8"?>{os.linesep}{match}'
+            href = f'Items/{id}.xml'
+            questions.append((id,href,question))
+            newAssessment = newAssessment.replace(match, f'''\
+            <assessmentItemRef identifier="{id}"
+                href="../{href}" required="true"
+                fixed="true"/>
+''')
+        
+        self.assessment = newAssessment
+        return questions
+
 
 
     def save(self, qti_path: Union[str, pathlib.Path]):

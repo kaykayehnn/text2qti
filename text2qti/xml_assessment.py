@@ -16,7 +16,7 @@ BEFORE_ITEMS = '''\
 <assessmentTest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" identifier="{assessment_identifier}"
     title="{title}"
-    xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1p1.xsd">
+    xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1p2.xsd">
   <testPart identifier="testPart_{assessment_identifier}" navigationMode="linear" submissionMode="individual">
     <assessmentSection identifier="root_assessmentSection" title="root_assessmentSection_title" visible="true">
 '''
@@ -44,7 +44,13 @@ GROUP_END = '''\
 '''
 
 TEXT = '''\
-      <assessmentItem identifier="{ident}" title="{text_title_xml}" timeDependent="false">
+      <assessmentItem identifier="{ident}"
+      title="{text_title_xml}"
+      timeDependent="false"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"
+      xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1
+      http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1p1.xsd">
 <!--        <itemmetadata> -->
 <!--          <qtimetadata> -->
 <!--            <qtimetadatafield> -->
@@ -72,7 +78,13 @@ TEXT = '''\
 '''
 
 START_ITEM = '''\
-      <assessmentItem identifier="{question_identifier}" title="{question_title}" timeDependent="false">
+      <assessmentItem identifier="{question_identifier}"
+      title="{question_title}"
+      timeDependent="false"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"
+      xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1
+      http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1p1.xsd">
 '''
 
 END_ITEM = '''\
@@ -110,18 +122,16 @@ ITEM_METADATA_UPLOAD = ITEM_METADATA_ESSAY
 ITEM_PRESENTATION_MCTF = '''\
         <itemBody>
           {question_html_xml}
-          <response_lid ident="response1" rcardinality="Single">
-            <render_choice>
+          <choiceInteraction responseIdentifier="response1">
 {choices}
-            </render_choice>
-          </response_lid>
+          </choiceInteraction>
         </itemBody>
 '''
 
 ITEM_PRESENTATION_MCTF_CHOICE = '''\
-              <response_label ident="{ident}">
+              <simpleChoice identifier="{ident}">
                 {choice_html_xml}
-              </response_label>'''
+              </simpleChoice>'''
 
 ITEM_PRESENTATION_MULTANS = ITEM_PRESENTATION_MCTF.replace('Single', 'Multiple')
 
@@ -166,12 +176,41 @@ ITEM_PRESENTATION_NUM = '''\
         </itemBody>
 '''
 
+ITEM_RESPONSE_DECLARATION_MCTF = '''\
+  <responseDeclaration identifier="RESPONSE" baseType="identifier" cardinality="single">
+    <correctResponse>
+      <value>{correct_choice}</value>
+    </correctResponse>
+  </responseDeclaration>
+  <outcomeDeclaration identifier="SCORE" cardinality="single" baseType="float" normalMaximum="1" normalMinimum="0">
+    <defaultValue>
+      <value>0</value>
+    </defaultValue>
+  </outcomeDeclaration>
+'''
+
 
 ITEM_RESPROCESSING_START = '''\
-        <resprocessing>
-          <outcomes>
-            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
-          </outcomes>
+        <responseProcessing xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1
+            http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1p2.xsd">
+            <responseCondition>
+                <responseIf>
+                    <match>
+                        <variable identifier="RESPONSE"/>
+                        <correct identifier="RESPONSE"/>
+                    </match>
+                    <setOutcomeValue identifier="SCORE">
+                        <baseValue baseType="float">1</baseValue>
+                    </setOutcomeValue>
+                </responseIf>
+                <responseElse>
+                    <setOutcomeValue identifier="SCORE">
+                        <baseValue baseType="float">0</baseValue>
+                    </setOutcomeValue>
+                </responseElse>
+            </responseCondition>
 '''
 
 ITEM_RESPROCESSING_MCTF_GENERAL_FEEDBACK = '''\
@@ -203,12 +242,6 @@ ITEM_RESPROCESSING_MCTF_SET_CORRECT_WITH_FEEDBACK = '''\
 '''
 
 ITEM_RESPROCESSING_MCTF_SET_CORRECT_NO_FEEDBACK = '''\
-          <respcondition continue="No">
-            <conditionvar>
-              <varequal respident="response1">{ident}</varequal>
-            </conditionvar>
-            <setvar action="Set" varname="SCORE">100</setvar>
-          </respcondition>
 '''
 
 ITEM_RESPROCESSING_MCTF_INCORRECT_FEEDBACK = '''\
@@ -363,7 +396,7 @@ ITEM_RESPROCESSING_ESSAY = '''\
 
 
 ITEM_RESPROCESSING_END = '''\
-        </resprocessing>
+        </responseProcessing>
 '''
 
 
@@ -497,6 +530,7 @@ def assessment(*, quiz: Quiz, assessment_identifier: str, title_xml: str) -> str
             if question.incorrect_feedback_raw is not None:
                 resprocessing.append(ITEM_RESPROCESSING_MCTF_INCORRECT_FEEDBACK)
             resprocessing.append(ITEM_RESPROCESSING_END)
+            resprocessing.append(ITEM_RESPONSE_DECLARATION_MCTF.format(correct_choice=correct_choice.id))
             xml.extend(resprocessing)
         elif question.type == 'short_answer_question':
             resprocessing = []
