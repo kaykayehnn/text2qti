@@ -8,35 +8,176 @@
 #
 
 
+import os
 from .quiz import Quiz, Question, GroupStart, GroupEnd, TextRegion
 
 
 BEFORE_ITEMS = '''\
 <?xml version="1.0" encoding="UTF-8"?>
 <assessmentTest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" identifier="{assessment_identifier}"
+    xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" identifier="test_{assessment_identifier}"
     title="{title}"
     xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1p2.xsd">
+  <outcomeDeclaration identifier="TOTAL_SCORE" cardinality="single" baseType="integer">
+      <defaultValue>
+          <value>0</value>
+      </defaultValue>
+  </outcomeDeclaration>
+  <outcomeDeclaration identifier="TOTAL_MAXSCORE" cardinality="single" baseType="float">
+      <defaultValue>
+          <value>1</value>
+      </defaultValue>
+  </outcomeDeclaration>
+  <outcomeDeclaration identifier="TOTAL_MINSCORE" cardinality="single" baseType="float">
+      <defaultValue>
+          <value>0</value>
+      </defaultValue>
+  </outcomeDeclaration>
+  <outcomeDeclaration identifier="TOTAL_NUMBERINCORRECT" cardinality="single" baseType="integer">
+      <defaultValue>
+          <value>0</value>
+      </defaultValue>
+  </outcomeDeclaration>
+  <outcomeDeclaration identifier="TOTAL_NUMBERCORRECT" cardinality="single" baseType="integer">
+      <defaultValue>
+          <value>0</value>
+      </defaultValue>
+  </outcomeDeclaration>
+  <outcomeDeclaration identifier="TOTAL_NUMBERPRESENTED" cardinality="single" baseType="integer">
+      <defaultValue>
+          <value>0</value>
+      </defaultValue>
+  </outcomeDeclaration>
+  <outcomeDeclaration identifier="SECTION_NUMBERSELECTED" cardinality="single" baseType="integer">
+      <defaultValue>
+          <value>0</value>
+      </defaultValue>
+  </outcomeDeclaration>
+  <outcomeDeclaration identifier="TOTAL_NUMBERRESPONDED" cardinality="single" baseType="integer">
+      <defaultValue>
+          <value>0</value>
+      </defaultValue>
+  </outcomeDeclaration>
+  <outcomeDeclaration identifier="SECTION_SCORE" cardinality="single" baseType="integer">
+      <defaultValue>
+          <value>0</value>
+      </defaultValue>
+  </outcomeDeclaration>
+  <outcomeDeclaration identifier="SECTION_MAXSCORE" cardinality="single" baseType="float">
+      <defaultValue>
+          <value>1</value>
+      </defaultValue>
+  </outcomeDeclaration>
+  <outcomeDeclaration identifier="SECTION_MINSCORE" cardinality="single" baseType="float">
+      <defaultValue>
+          <value>0</value>
+      </defaultValue>
+  </outcomeDeclaration>
+  <outcomeDeclaration identifier="SECTION_NUMBERINCORRECT" cardinality="single" baseType="integer">
+      <defaultValue>
+          <value>0</value>
+      </defaultValue>
+  </outcomeDeclaration>
+  <outcomeDeclaration identifier="SECTION_NUMBERCORRECT" cardinality="single" baseType="integer">
+      <defaultValue>
+          <value>0</value>
+      </defaultValue>
+  </outcomeDeclaration>
+  <outcomeDeclaration identifier="SECTION_NUMBERPRESENTED" cardinality="single" baseType="integer">
+      <defaultValue>
+          <value>0</value>
+      </defaultValue>
+  </outcomeDeclaration>
+  <outcomeDeclaration identifier="TOTAL_NUMBERSELECTED" cardinality="single" baseType="integer">
+      <defaultValue>
+          <value>0</value>
+      </defaultValue>
+  </outcomeDeclaration>
+  <outcomeDeclaration identifier="SECTION_NUMBERRESPONDED" cardinality="single" baseType="integer">
+      <defaultValue>
+          <value>0</value>
+      </defaultValue>
+  </outcomeDeclaration>
   <testPart identifier="testPart_{assessment_identifier}" navigationMode="linear" submissionMode="individual">
-    <assessmentSection identifier="root_assessmentSection" title="root_assessmentSection_title" visible="true">
+    <assessmentSection identifier="root_assessmentSection"
+      title=""
+      required="true"
+      visible="false"
+      keepTogether="true"
+      fixed="false">
 '''
 
 AFTER_ITEMS = '''\
     </assessmentSection>
   </testPart>
+  <outcomeProcessing>
+      <setOutcomeValue identifier="TOTAL_SCORE">
+          <sum>
+              <testVariables variableIdentifier="SCORE"/>
+          </sum>
+      </setOutcomeValue>
+      <setOutcomeValue identifier="TOTAL_MAXSCORE">
+          <sum>
+              <outcomeMinimum outcomeIdentifier="SCORE"/>
+          </sum>
+      </setOutcomeValue>
+      <setOutcomeValue identifier="TOTAL_MINSCORE">
+          <sum>
+              <outcomeMaximum outcomeIdentifier="SCORE"/>
+          </sum>
+      </setOutcomeValue>
+      <setOutcomeValue identifier="TOTAL_NUMBERINCORRECT">
+          <numberIncorrect/>
+      </setOutcomeValue>
+      <setOutcomeValue identifier="TOTAL_NUMBERCORRECT">
+          <numberCorrect/>
+      </setOutcomeValue>
+      <setOutcomeValue identifier="TOTAL_NUMBERRESPONDED">
+          <numberResponded/>
+      </setOutcomeValue>
+      <setOutcomeValue identifier="TOTAL_NUMBERSELECTED">
+          <numberSelected/>
+      </setOutcomeValue>
+      <setOutcomeValue identifier="TOTAL_NUMBERPRESENTED">
+          <numberPresented/>
+      </setOutcomeValue>
+      <setOutcomeValue identifier="SECTION_SCORE">
+          <sum>
+              <testVariables variableIdentifier="SCORE" sectionIdentifier="{assessment_identifier}"/>
+          </sum>
+      </setOutcomeValue>
+      <setOutcomeValue identifier="SECTION_MAXSCORE">
+          <sum>
+              <outcomeMinimum outcomeIdentifier="SCORE" sectionIdentifier="{assessment_identifier}"/>
+          </sum>
+      </setOutcomeValue>
+      <setOutcomeValue identifier="SECTION_MINSCORE">
+          <sum>
+              <outcomeMaximum outcomeIdentifier="SCORE" sectionIdentifier="{assessment_identifier}"/>
+          </sum>
+      </setOutcomeValue>
+      <setOutcomeValue identifier="SECTION_NUMBERINCORRECT">
+          <numberIncorrect sectionIdentifier="{assessment_identifier}"/>
+      </setOutcomeValue>
+      <setOutcomeValue identifier="SECTION_NUMBERCORRECT">
+          <numberCorrect sectionIdentifier="{assessment_identifier}"/>
+      </setOutcomeValue>
+      <setOutcomeValue identifier="SECTION_NUMBERRESPONDED">
+          <numberResponded sectionIdentifier="{assessment_identifier}"/>
+      </setOutcomeValue>
+      <setOutcomeValue identifier="SECTION_NUMBERSELECTED">
+          <numberSelected sectionIdentifier="{assessment_identifier}"/>
+      </setOutcomeValue>
+      <setOutcomeValue identifier="SECTION_NUMBERPRESENTED">
+          <numberPresented sectionIdentifier="{assessment_identifier}"/>
+      </setOutcomeValue>
+  </outcomeProcessing>
 </assessmentTest>
 '''
 
 GROUP_START = '''\
-    <assessmentSection identifier="{ident}" title="{group_title}" visible="true">
-      <selection_ordering>
-        <selection>
-          <selection_number>{pick}</selection_number>
-          <selection_extension>
-            <points_per_item>{points_per_item}</points_per_item>
-          </selection_extension>
-        </selection>
-      </selection_ordering>
+    <assessmentSection identifier="group_{ident}" title="{group_title}" visible="false">
+      <selection select="{pick}" />
 '''
 
 GROUP_END = '''\
@@ -44,41 +185,13 @@ GROUP_END = '''\
 '''
 
 TEXT = '''\
-      <assessmentItem identifier="{ident}"
-      title="{text_title_xml}"
-      timeDependent="false"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"
-      xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1
-      http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1p1.xsd">
-<!--        <itemmetadata> -->
-<!--          <qtimetadata> -->
-<!--            <qtimetadatafield> -->
-<!--              <fieldlabel>question_type</fieldlabel> -->
-<!--              <fieldentry>text_only_question</fieldentry> -->
-<!--            </qtimetadatafield> -->
-<!--            <qtimetadatafield> -->
-<!--              <fieldlabel>points_possible</fieldlabel> -->
-<!--              <fieldentry>0</fieldentry> -->
-<!--            </qtimetadatafield> -->
-<!--            <qtimetadatafield> -->
-<!--              <fieldlabel>original_answer_ids</fieldlabel> -->
-<!--              <fieldentry></fieldentry> -->
-<!--            </qtimetadatafield> -->
-<!--            <qtimetadatafield> -->
-<!--              <fieldlabel>assessment_question_identifierref</fieldlabel> -->
-<!--              <fieldentry>{assessment_question_identifierref}</fieldentry> -->
-<!--            </qtimetadatafield> -->
-<!--          </qtimetadata> -->
-<!--        </itemmetadata> -->
-        <itemBody>
+      <rubricBlock view="author candidate proctor scorer testConstructor tutor">
           {text_html_xml}
-        </itemBody>
-      </assessmentItem>
+      </rubricBlock>
 '''
 
 START_ITEM = '''\
-      <assessmentItem identifier="{question_identifier}"
+      <assessmentItem identifier="question_{question_identifier}"
       title="{question_title}"
       timeDependent="false"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -93,26 +206,6 @@ END_ITEM = '''\
 
 
 ITEM_METADATA_MCTF_SHORTANS_MULTANS_NUM = '''\
-<!--        <itemmetadata> -->
-<!--          <qtimetadata> -->
-<!--            <qtimetadatafield> -->
-<!--              <fieldlabel>question_type</fieldlabel> -->
-<!--              <fieldentry>{question_type}</fieldentry> -->
-<!--            </qtimetadatafield> -->
-<!--            <qtimetadatafield> -->
-<!--              <fieldlabel>points_possible</fieldlabel> -->
-<!--              <fieldentry>{points_possible}</fieldentry> -->
-<!--            </qtimetadatafield> -->
-<!--            <qtimetadatafield> -->
-<!--              <fieldlabel>original_answer_ids</fieldlabel> -->
-<!--              <fieldentry>{original_answer_ids}</fieldentry> -->
-<!--            </qtimetadatafield> -->
-<!--            <qtimetadatafield> -->
-<!--              <fieldlabel>assessment_question_identifierref</fieldlabel> -->
-<!--              <fieldentry>{assessment_question_identifierref}</fieldentry> -->
-<!--            </qtimetadatafield> -->
-<!--          </qtimetadata> -->
-<!--        </itemmetadata> -->
 '''
 
 ITEM_METADATA_ESSAY = ITEM_METADATA_MCTF_SHORTANS_MULTANS_NUM.replace('{original_answer_ids}', '')
@@ -121,30 +214,32 @@ ITEM_METADATA_UPLOAD = ITEM_METADATA_ESSAY
 
 ITEM_PRESENTATION_MCTF = '''\
         <itemBody>
+          <div>
           {question_html_xml}
-          <choiceInteraction responseIdentifier="response1">
+          </div>
+          <choiceInteraction responseIdentifier="RESPONSE" shuffle="true">
 {choices}
           </choiceInteraction>
         </itemBody>
 '''
 
 ITEM_PRESENTATION_MCTF_CHOICE = '''\
-              <simpleChoice identifier="{ident}">
+              <simpleChoice
+                identifier="{ident}"
+                fixed="false" showHide="show">
                 {choice_html_xml}
               </simpleChoice>'''
 
-ITEM_PRESENTATION_MULTANS = ITEM_PRESENTATION_MCTF.replace('Single', 'Multiple')
+ITEM_PRESENTATION_MULTANS = ITEM_PRESENTATION_MCTF.replace('<choiceInteraction', '<choiceInteraction maxChoices="{maxChoices}"')
 
 ITEM_PRESENTATION_MULTANS_CHOICE = ITEM_PRESENTATION_MCTF_CHOICE
 
 ITEM_PRESENTATION_SHORTANS = '''\
         <itemBody>
+          <div>
           {question_html_xml}
-          <response_str ident="response1" rcardinality="Single">
-            <render_fib>
-              <response_label ident="answer1" rshuffle="No"/>
-            </render_fib>
-          </response_str>
+          <p><textEntryInteraction responseIdentifier="RESPONSE" expectedLength="15" /></p>
+          </div>
         </itemBody>
 '''
 
@@ -179,7 +274,7 @@ ITEM_PRESENTATION_NUM = '''\
 ITEM_RESPONSE_DECLARATION_MCTF = '''\
   <responseDeclaration identifier="RESPONSE" baseType="identifier" cardinality="single">
     <correctResponse>
-      <value>{correct_choice}</value>
+      <value>text2qti_choice_{correct_choice}</value>
     </correctResponse>
   </responseDeclaration>
   <outcomeDeclaration identifier="SCORE" cardinality="single" baseType="float" normalMaximum="1" normalMinimum="0">
@@ -189,6 +284,46 @@ ITEM_RESPONSE_DECLARATION_MCTF = '''\
   </outcomeDeclaration>
 '''
 
+ITEM_RESPONSE_DECLARATION_MULTANS = '''\
+  <responseDeclaration identifier="RESPONSE" cardinality="multiple" baseType="identifier">
+    <correctResponse>
+      {correctResponses}
+    </correctResponse>
+    <mapping lowerBound="0" upperBound="{correctResponsesCount}" defaultValue="{defaultValue}">
+      {mappings}
+    </mapping>
+  </responseDeclaration>
+  <outcomeDeclaration identifier="SCORE" cardinality="single" baseType="float"/>  
+'''
+
+
+ITEM_RESPONSE_DECLARATION_CORRECT_RESPONSE = '''\
+      <value>{ident}</value>
+'''
+
+ITEM_RESPONSE_DECLARATION_MAPPING_CORRECT = '''\
+      <mapEntry mapKey="{ident}" mappedValue="1" />
+'''
+
+ITEM_RESPONSE_DECLARATION_MAPPING_INCORRECT = '''\
+      <mapEntry mapKey="{ident}" mappedValue="-1" />
+'''
+
+ITEM_RESPONSE_DECLARATION_SHORTANS = '''\
+  <responseDeclaration identifier="RESPONSE" cardinality="single" baseType="string">
+    <correctResponse>
+      {correctResponses}
+    </correctResponse>
+    <mapping defaultValue="0">
+      {mapping}
+    </mapping>
+  </responseDeclaration>
+  <outcomeDeclaration identifier="SCORE" cardinality="single" baseType="float" normalMaximum="1" normalMinimum="0">
+    <defaultValue>
+      <value>0.0</value>
+    </defaultValue>
+  </outcomeDeclaration>
+'''
 
 ITEM_RESPROCESSING_START = '''\
         <responseProcessing xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"
@@ -485,6 +620,43 @@ def assessment(*, quiz: Quiz, assessment_identifier: str, title_xml: str) -> str
                                         original_answer_ids=original_answer_ids,
                                         assessment_question_identifierref=f'text2qti_question_ref_{question.id}'))
 
+        if question.type in ('true_false_question', 'multiple_choice_question'):
+            correct_choice = None
+            for choice in question.choices:
+                if choice.correct:
+                  correct_choice = choice
+                  break
+            if correct_choice is None:
+                raise TypeError
+            
+            xml.append(ITEM_RESPONSE_DECLARATION_MCTF.format(correct_choice=correct_choice.id))
+        elif question.type in ('multiple_answers_question'):
+          correctResponses = []
+          mappings = []
+          for choice in question.choices:
+                if choice.correct:
+                  correctResponses.append(ITEM_RESPONSE_DECLARATION_CORRECT_RESPONSE.format(ident=f'text2qti_choice_{choice.id}'))
+                  mappings.append(ITEM_RESPONSE_DECLARATION_MAPPING_CORRECT.format(ident=f'text2qti_choice_{choice.id}'))
+                else:
+                  mappings.append(ITEM_RESPONSE_DECLARATION_MAPPING_INCORRECT.format(ident=f'text2qti_choice_{choice.id}'))
+          
+          xml.append(ITEM_RESPONSE_DECLARATION_MULTANS.format(
+            correctResponses="".join(correctResponses),
+            correctResponsesCount=len(correctResponses),
+            mappings="".join(mappings),
+            defaultValue=-len(correctResponses)+1
+          ))
+        elif question.type == 'short_answer_question':
+          mapping=[]
+          correctResponses=[]
+          for choice in question.choices:
+              correctResponses.append(ITEM_RESPONSE_DECLARATION_CORRECT_RESPONSE.format(ident=choice.choice_xml))
+              mapping.append(ITEM_RESPONSE_DECLARATION_MAPPING_CORRECT.format(ident=choice.choice_xml))
+          xml.append(ITEM_RESPONSE_DECLARATION_SHORTANS.format(
+            correctResponses="".join(correctResponses),
+            mapping="".join(mapping)))
+
+
         if question.type in ('true_false_question', 'multiple_choice_question', 'multiple_answers_question'):
             if question.type in ('true_false_question', 'multiple_choice_question'):
                 item_presentation_choice = ITEM_PRESENTATION_MCTF_CHOICE
@@ -496,7 +668,7 @@ def assessment(*, quiz: Quiz, assessment_identifier: str, title_xml: str) -> str
                 raise ValueError
             choices = '\n'.join(item_presentation_choice.format(ident=f'text2qti_choice_{c.id}', choice_html_xml=c.choice_html_xml)
                                                                 for c in question.choices)
-            xml.append(item_presentation.format(question_html_xml=question.question_html_xml, choices=choices))
+            xml.append(item_presentation.format(question_html_xml=question.question_html_xml, choices=choices, maxChoices=len(question.choices)))
         elif question.type == 'short_answer_question':
             xml.append(ITEM_PRESENTATION_SHORTANS.format(question_html_xml=question.question_html_xml))
         elif question.type == 'numerical_question':
@@ -530,47 +702,46 @@ def assessment(*, quiz: Quiz, assessment_identifier: str, title_xml: str) -> str
             if question.incorrect_feedback_raw is not None:
                 resprocessing.append(ITEM_RESPROCESSING_MCTF_INCORRECT_FEEDBACK)
             resprocessing.append(ITEM_RESPROCESSING_END)
-            resprocessing.append(ITEM_RESPONSE_DECLARATION_MCTF.format(correct_choice=correct_choice.id))
             xml.extend(resprocessing)
         elif question.type == 'short_answer_question':
             resprocessing = []
             resprocessing.append(ITEM_RESPROCESSING_START)
-            if question.feedback_raw is not None:
-                resprocessing.append(ITEM_RESPROCESSING_SHORTANS_GENERAL_FEEDBACK)
-            for choice in question.choices:
-                if choice.feedback_raw is not None:
-                    resprocessing.append(ITEM_RESPROCESSING_SHORTANS_CHOICE_FEEDBACK.format(ident=f'text2qti_choice_{choice.id}', answer_xml=choice.choice_xml))
-            varequal = []
-            for choice in question.choices:
-                varequal.append(ITEM_RESPROCESSING_SHORTANS_SET_CORRECT_VAREQUAL.format(answer_xml=choice.choice_xml))
-            if question.correct_feedback_raw is not None:
-                resprocessing.append(ITEM_RESPROCESSING_SHORTANS_SET_CORRECT_WITH_FEEDBACK.format(varequal='\n'.join(varequal)))
-            else:
-                resprocessing.append(ITEM_RESPROCESSING_SHORTANS_SET_CORRECT_NO_FEEDBACK.format(varequal='\n'.join(varequal)))
-            if question.incorrect_feedback_raw is not None:
-                resprocessing.append(ITEM_RESPROCESSING_SHORTANS_INCORRECT_FEEDBACK)
+            # if question.feedback_raw is not None:
+            #     resprocessing.append(ITEM_RESPROCESSING_SHORTANS_GENERAL_FEEDBACK)
+            # for choice in question.choices:
+            #     if choice.feedback_raw is not None:
+            #         resprocessing.append(ITEM_RESPROCESSING_SHORTANS_CHOICE_FEEDBACK.format(ident=f'text2qti_choice_{choice.id}', answer_xml=choice.choice_xml))
+            # varequal = []
+            # for choice in question.choices:
+            #     varequal.append(ITEM_RESPROCESSING_SHORTANS_SET_CORRECT_VAREQUAL.format(answer_xml=choice.choice_xml))
+            # if question.correct_feedback_raw is not None:
+            #     resprocessing.append(ITEM_RESPROCESSING_SHORTANS_SET_CORRECT_WITH_FEEDBACK.format(varequal='\n'.join(varequal)))
+            # else:
+            #     resprocessing.append(ITEM_RESPROCESSING_SHORTANS_SET_CORRECT_NO_FEEDBACK.format(varequal='\n'.join(varequal)))
+            # if question.incorrect_feedback_raw is not None:
+            #     resprocessing.append(ITEM_RESPROCESSING_SHORTANS_INCORRECT_FEEDBACK)
             resprocessing.append(ITEM_RESPROCESSING_END)
             xml.extend(resprocessing)
         elif question.type == 'multiple_answers_question':
             resprocessing = []
             resprocessing.append(ITEM_RESPROCESSING_START)
-            if question.feedback_raw is not None:
-                resprocessing.append(ITEM_RESPROCESSING_MULTANS_GENERAL_FEEDBACK)
-            for choice in question.choices:
-                if choice.feedback_raw is not None:
-                    resprocessing.append(ITEM_RESPROCESSING_MULTANS_CHOICE_FEEDBACK.format(ident=f'text2qti_choice_{choice.id}'))
-            varequal = []
-            for choice in question.choices:
-                if choice.correct:
-                    varequal.append(ITEM_RESPROCESSING_MULTANS_SET_CORRECT_VAREQUAL_CORRECT.format(ident=f'text2qti_choice_{choice.id}'))
-                else:
-                    varequal.append(ITEM_RESPROCESSING_MULTANS_SET_CORRECT_VAREQUAL_INCORRECT.format(ident=f'text2qti_choice_{choice.id}'))
-            if question.correct_feedback_raw is not None:
-                resprocessing.append(ITEM_RESPROCESSING_MULTANS_SET_CORRECT_WITH_FEEDBACK.format(varequal='\n'.join(varequal)))
-            else:
-                resprocessing.append(ITEM_RESPROCESSING_MULTANS_SET_CORRECT_NO_FEEDBACK.format(varequal='\n'.join(varequal)))
-            if question.incorrect_feedback_raw is not None:
-                resprocessing.append(ITEM_RESPROCESSING_MULTANS_INCORRECT_FEEDBACK)
+            # if question.feedback_raw is not None:
+            #     resprocessing.append(ITEM_RESPROCESSING_MULTANS_GENERAL_FEEDBACK)
+            # for choice in question.choices:
+            #     if choice.feedback_raw is not None:
+            #         resprocessing.append(ITEM_RESPROCESSING_MULTANS_CHOICE_FEEDBACK.format(ident=f'text2qti_choice_{choice.id}'))
+            # varequal = []
+            # for choice in question.choices:
+            #     if choice.correct:
+            #         varequal.append(ITEM_RESPROCESSING_MULTANS_SET_CORRECT_VAREQUAL_CORRECT.format(ident=f'text2qti_choice_{choice.id}'))
+            #     else:
+            #         varequal.append(ITEM_RESPROCESSING_MULTANS_SET_CORRECT_VAREQUAL_INCORRECT.format(ident=f'text2qti_choice_{choice.id}'))
+            # if question.correct_feedback_raw is not None:
+            #     resprocessing.append(ITEM_RESPROCESSING_MULTANS_SET_CORRECT_WITH_FEEDBACK.format(varequal='\n'.join(varequal)))
+            # else:
+            #     resprocessing.append(ITEM_RESPROCESSING_MULTANS_SET_CORRECT_NO_FEEDBACK.format(varequal='\n'.join(varequal)))
+            # if question.incorrect_feedback_raw is not None:
+            #     resprocessing.append(ITEM_RESPROCESSING_MULTANS_INCORRECT_FEEDBACK)
             resprocessing.append(ITEM_RESPROCESSING_END)
             xml.extend(resprocessing)
         elif question.type == 'numerical_question':
@@ -625,6 +796,6 @@ def assessment(*, quiz: Quiz, assessment_identifier: str, title_xml: str) -> str
 
         xml.append(END_ITEM)
 
-    xml.append(AFTER_ITEMS)
+    xml.append(AFTER_ITEMS.format(assessment_identifier=assessment_identifier))
 
     return ''.join(xml)

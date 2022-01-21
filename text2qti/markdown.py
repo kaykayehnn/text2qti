@@ -237,7 +237,7 @@ class Markdown(object):
         return string
 
 
-    CANVAS_EQUATION_TEMPLATE = '<img class="equation_image" title="{latex_xml_escaped}" src="{latex_render_url}/{latex_url_escaped}" alt="LaTeX: {latex_xml_escaped}" data-equation-content="{latex_xml_escaped}" />'
+    CANVAS_EQUATION_TEMPLATE = '<img class="equation_image" src="{latex_render_url}/{latex_url_escaped}" alt="LaTeX: {latex_xml_escaped}" />'
 
     def latex_to_canvas_img(self, latex: str) -> str:
         '''

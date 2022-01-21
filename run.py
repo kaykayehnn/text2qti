@@ -9,8 +9,7 @@ def main():
   config = Config()
   config['latex_render_url'] = "https://canvas.instructure.com/equation_images/"
   quiz = Quiz(text, config=config)
-  qti = QTI(quiz)
-  print(123)
+  qti = QTI(quiz,[],[],config)
   qti.save("quiz.zip")
 
 main()

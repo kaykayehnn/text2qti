@@ -61,7 +61,30 @@ http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_metadata_v2p1p1.xsd">
   </metadata>
   <organizations/>
   <resources>
-    <resource identifier="{assessment_identifier}" type="imsqti_test_xmlv2p1">
+    <resource type="imsqti_test_xmlv2p1"
+    href="{assessment_identifier}/{assessment_identifier}.xml"
+    identifier="{assessment_identifier}" >
+      <metadata>
+        <lom xmlns="http://ltsc.ieee.org/xsd/LOM">
+          <general>
+            <identifier>
+              <entry>{assessment_identifier}</entry>
+            </identifier>
+            <title></title>
+          </general>
+          <lifeCycle>
+            <contribute />
+            <version>
+              <string>Final 1.0</string>
+            </version>
+          </lifeCycle>
+          <educational>
+            <description>
+              <string>Test.</string>
+            </description>
+          </educational>
+        </lom>
+      </metadata>
       <file href="{assessment_identifier}/{assessment_identifier}.xml"/>
     </resource>
 '''
@@ -77,30 +100,30 @@ ITEM_RESOURCE = '''\
     identifier="ResourceItem{id}"
     href="{href}">
       <metadata>
-<!--        <lom xmlns="http://ltsc.ieee.org/xsd/LOM"> -->
-<!--          <general> -->
-<!--            <identifier> -->
-<!--              <entry>VE_IP_01</entry> -->
-<!--            </identifier> -->
-<!--            <title></title> -->
-<!--          </general> -->
-<!--          <lifeCycle> -->
-<!--            <contribute /> -->
-<!--            <version> -->
-<!--              <string>Final 1.0</string> -->
-<!--            </version> -->
-<!--          </lifeCycle> -->
-<!--          <educational> -->
-<!--            <description> -->
-<!--              <string>The T/F Question.</string> -->
-<!--            </description> -->
-<!--          </educational> -->
+        <lom xmlns="http://ltsc.ieee.org/xsd/LOM">
+          <general>
+            <identifier>
+              <entry>{id}</entry>
+            </identifier>
+            <title></title>
+          </general>
+          <lifeCycle>
+            <contribute />
+            <version>
+              <string>Final 1.0</string>
+            </version>
+          </lifeCycle>
+          <educational>
+            <description>
+              <string>Question</string>
+            </description>
+          </educational>
 <!--          <qtiMetadata xmlns="http://www.imsglobal.org/xsd/imsqti_metadata_v2p1"> -->
 <!--            <interactionType>choiceInteraction</interactionType> -->
 <!--            <feedbackType>none</feedbackType> -->
 <!--            <solutionAvailable>false</solutionAvailable> -->
 <!--          </qtiMetadata> -->
-<!--        </lom> -->
+        </lom>
       </metadata>
       <file href="{href}" />
     </resource>
